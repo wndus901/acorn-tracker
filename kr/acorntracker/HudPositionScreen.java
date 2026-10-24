@@ -26,6 +26,10 @@ public final class HudPositionScreen extends class_437 {
       int total = Math.min(332, this.field_22789 - 16);
       int x = (this.field_22789 - total) / 2;
       int unit = (total - 12) / 3;
+      this.method_37063(new AcornButton(x, this.field_22790 - 80, total, 20, "글꼴 · " + HudFonts.label(this.config.hudFont), (button) -> {
+         AcornTrackerClient.INSTANCE.setHudFont(HudFonts.next(this.config.hudFont));
+         this.method_41843();
+      }));
       this.method_37063(new WoodlandSlider(x, this.field_22790 - 54, total, 20, (Math.clamp(this.config.hudScale, (double)0.5F, (double)2.0F) - (double)0.5F) / (double)1.5F) {
          {
             this.method_25346();
@@ -60,10 +64,10 @@ public final class HudPositionScreen extends class_437 {
       }
 
       this.bounds = HudRenderer.render(ctx, this.config, AcornTrackerClient.INSTANCE.hudRows(true), true);
-      WoodlandSkin.button(ctx, Math.max(4, this.field_22789 / 2 - 132), this.field_22790 - 86, Math.min(264, this.field_22789 - 8), 25, -1);
-      ctx.method_25300(this.field_22793, "HUD를 드래그 · 방향키 1px / Shift 10px", this.field_22789 / 2, this.field_22790 - 79, -5699);
+      WoodlandSkin.button(ctx, Math.max(4, this.field_22789 / 2 - 132), this.field_22790 - 112, Math.min(264, this.field_22789 - 8), 25, -1);
+      ctx.method_25300(this.field_22793, "HUD를 드래그 · 방향키 1px / Shift 10px", this.field_22789 / 2, this.field_22790 - 105, -5699);
       if (!this.config.hud) {
-         ctx.method_25300(this.field_22793, "미리보기 · 현재 HUD 표시 꺼짐", this.field_22789 / 2, this.field_22790 - 99, -1458825);
+         ctx.method_25300(this.field_22793, "미리보기 · 현재 HUD 표시 꺼짐", this.field_22789 / 2, this.field_22790 - 125, -1458825);
       }
 
       super.method_25394(ctx, mouseX, mouseY, delta);

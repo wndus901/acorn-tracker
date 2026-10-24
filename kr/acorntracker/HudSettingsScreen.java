@@ -117,15 +117,14 @@ public final class HudSettingsScreen extends class_437 {
 
          String theme = var10000;
          this.method_37063(new AcornButton(x, this.top + 91, w, 20, "테마  ·  " + theme, (button) -> {
-            TrackerConfig var10000 = this.config;
-            String var10001;
+            String nextTheme;
             switch (this.config.hudTheme == null ? "forest" : this.config.hudTheme) {
-               case "forest" -> var10001 = "amber";
-               case "amber" -> var10001 = "slate";
-               default -> var10001 = "forest";
+               case "forest" -> nextTheme = "amber";
+               case "amber" -> nextTheme = "slate";
+               default -> nextTheme = "forest";
             }
 
-            var10000.hudTheme = var10001;
+            this.config.hudTheme = nextTheme;
             this.refresh();
          }));
          this.method_37063(new WoodlandSlider(x, this.top + 117, w, 20, (Math.clamp(this.config.hudScale, (double)0.5F, (double)2.0F) - (double)0.5F) / (double)1.5F) {
@@ -154,11 +153,16 @@ public final class HudSettingsScreen extends class_437 {
                HudSettingsScreen.this.config.hudOpacity = (int)Math.round(this.field_22753 * (double)100.0F);
             }
          });
-         this.method_37063(new AcornButton(x, this.top + 169, w, 20, "위치 · 스타일 기본값으로", (button) -> {
+         this.method_37063(new AcornButton(x, this.top + 169, w, 20, "글꼴  ·  " + HudFonts.label(this.config.hudFont), (button) -> {
+            AcornTrackerClient.INSTANCE.setHudFont(HudFonts.next(this.config.hudFont));
+            this.refresh();
+         }));
+         this.method_37063(new AcornButton(x, this.top + 195, w, 20, "위치 · 스타일 기본값으로", (button) -> {
             this.config.hudX = this.config.hudY = (double)0.0F;
             this.config.hudScale = (double)1.0F;
             this.config.hudOpacity = 85;
             this.config.hudTheme = "forest";
+            AcornTrackerClient.INSTANCE.setHudFont("default");
             this.refresh();
          }));
       }

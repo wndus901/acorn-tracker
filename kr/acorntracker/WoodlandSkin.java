@@ -26,7 +26,7 @@ public final class WoodlandSkin {
    }
 
    public static void panel(class_332 ctx, int x, int y, int width, int height, int color) {
-      nineSlice(ctx, PANEL, x, y, width, height, 1254, 1254, 0, 0, 1254, 1254, 320, 320, 30, 30, color);
+      nineSlice(ctx, PANEL, x, y, width, height, 1173, 1139, 0, 0, 1173, 1139, 279, 261, 30, 30, color);
    }
 
    public static void button(class_332 ctx, int x, int y, int width, int height, int color) {

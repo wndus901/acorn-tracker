@@ -1,6 +1,7 @@
 package kr.acorntracker;
 
 import java.util.List;
+import net.minecraft.class_2561;
 import net.minecraft.class_310;
 import net.minecraft.class_327;
 import net.minecraft.class_332;
@@ -32,17 +33,23 @@ public final class HudRenderer {
 
    public static HudLayout.Bounds render(class_332 ctx, TrackerConfig config, List<Row> rows, boolean preview) {
       class_327 font = class_310.method_1551().field_1772;
-      int width = 192;
+      int width = 128;
 
       for(Row row : rows) {
-         int contentWidth = font.method_1727(row.label) + font.method_1727(row.value) + 48;
+         int valueWidth = textWidth(font, config, row.value);
+         int valueGap = 0;
+         if (row.kind == HudRenderer.Kind.VALUE) {
+            valueWidth = Math.max(valueWidth, textWidth(font, config, "10,000,000원"));
+            valueGap = 16;
+         }
+
+         int contentWidth = textWidth(font, config, row.label) + valueWidth + 40 + valueGap;
          width = Math.max(width, contentWidth);
       }
 
-      int height = 36 + rows.stream().mapToInt(HudRenderer::rowHeight).sum();
+      int height = 34 + rows.stream().mapToInt(HudRenderer::rowHeight).sum();
       if (rows.isEmpty()) {
-         width = Math.max(width, font.method_1727("표시 항목이 모두 꺼져 있습니다") + 48);
-         height = 64;
+         width = Math.max(width, textWidth(font, config, "표시 항목이 모두 꺼져 있습니다") + 40);
       }
 
       HudLayout.Bounds bounds = HudLayout.bounds(ctx.method_51421(), ctx.method_51443(), width, height, config);
@@ -57,17 +64,17 @@ public final class HudRenderer {
 
          try {
             WoodlandSkin.panel(ctx, 0, 0, width, height, WoodlandSkin.tint(config.hudTheme, config.hudOpacity));
-            int y = 18;
+            int y = 20;
 
             for(Row row : rows) {
                int h = rowHeight(row);
                switch (row.kind.ordinal()) {
                   case 0:
-                     WoodlandSkin.button(ctx, 34, y - 5, width - 68, 23, WoodlandSkin.tint(config.hudTheme, config.hudOpacity));
-                     ctx.method_25300(font, row.label, width / 2, y + 2, -5699);
+                     WoodlandSkin.button(ctx, 30, y - 5, width - 60, 23, WoodlandSkin.tint(config.hudTheme, config.hudOpacity));
+                     drawCentered(ctx, font, config, row.label, width / 2, y + 2, -5699);
                      break;
                   case 6:
-                     ctx.method_25303(font, row.label, 23, y + 7, -1784166);
+                     draw(ctx, font, config, row.label, 20, y + 7, -1784166);
                      break;
                   default:
                      int label = row.kind == HudRenderer.Kind.WARNING ? -16003 : (row.kind == HudRenderer.Kind.DETAIL ? -1784166 : -5699);
@@ -92,15 +99,15 @@ public final class HudRenderer {
                      }
 
                      int value = var10000;
-                     ctx.method_25303(font, row.label, 23, y + 1, label);
-                     ctx.method_25303(font, row.value, width - 23 - font.method_1727(row.value), y + 1, value);
+                     draw(ctx, font, config, row.label, 20, y + 1, label);
+                     draw(ctx, font, config, row.value, width - 20 - textWidth(font, config, row.value), y + 1, value);
                }
 
                y += h;
             }
 
             if (rows.isEmpty()) {
-               ctx.method_25300(font, "표시 항목이 모두 꺼져 있습니다", width / 2, 27, -5699);
+               drawCentered(ctx, font, config, "표시 항목이 모두 꺼져 있습니다", width / 2, 20, -5699);
             }
 
             if (preview) {
@@ -118,6 +125,19 @@ public final class HudRenderer {
 
          return bounds;
       }
+   }
+
+   private static int textWidth(class_327 font, TrackerConfig config, String value) {
+      return font.method_27525(HudFonts.text(value, config.hudFont));
+   }
+
+   private static void draw(class_332 ctx, class_327 font, TrackerConfig config, String value, int x, int y, int color) {
+      ctx.method_51433(font, HudFonts.text(value, config.hudFont), x, y, color, HudFonts.isDefault(config.hudFont));
+   }
+
+   private static void drawCentered(class_332 ctx, class_327 font, TrackerConfig config, String value, int centerX, int y, int color) {
+      class_2561 text = HudFonts.text(value, config.hudFont);
+      ctx.method_51433(font, text, centerX - font.method_27525(text) / 2, y, color, HudFonts.isDefault(config.hudFont));
    }
 
    public static void rounded(class_332 ctx, int x, int y, int width, int height, int color) {
