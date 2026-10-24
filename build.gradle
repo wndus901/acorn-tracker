@@ -1,0 +1,119 @@
+plugins {
+    id 'fabric-loom' version '1.11.8'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ["$buildDir/generated/sources/named"]
+        resources.srcDirs = ['.']
+        resources.include 'fabric.mod.json', 'acorn_tracker.mixins.json', 'assets/**'
+    }
+}
+
+configurations {
+    sourceMappings
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    sourceMappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+def generatedSources = file("$buildDir/generated/sources/named")
+
+tasks.register('remapIntermediarySources') {
+    inputs.dir('kr')
+    inputs.files(configurations.sourceMappings)
+    outputs.dir(generatedSources)
+
+    doLast {
+        def classes = []
+        def members = [:]
+        def ambiguousMembers = [] as Set
+        def mappingsJar = new java.util.zip.ZipFile(configurations.sourceMappings.singleFile)
+
+        try {
+            def mappingsEntry = mappingsJar.getEntry('mappings/mappings.tiny')
+            if (mappingsEntry == null) {
+                throw new GradleException('Yarn mappings archive is missing mappings/mappings.tiny')
+            }
+
+            mappingsJar.getInputStream(mappingsEntry).withReader('UTF-8') { reader ->
+                reader.eachLine { line ->
+                    def parts = line.split('\t', -1)
+                    if (parts[0] == 'c') {
+                        classes.add([intermediary: parts[1], named: parts[2]])
+                    } else if (parts[0].isEmpty() && (parts[1] == 'm' || parts[1] == 'f')) {
+                        def intermediaryName = parts[3]
+                        def namedName = parts[4]
+                        if (members.containsKey(intermediaryName) && members[intermediaryName] != namedName) {
+                            ambiguousMembers.add(intermediaryName)
+                        } else {
+                            members[intermediaryName] = namedName
+                        }
+                    }
+                }
+            }
+        } finally {
+            mappingsJar.close()
+        }
+
+        generatedSources.deleteDir()
+
+        fileTree('kr').matching { include '**/*.java' }.each { source ->
+            def content = source.getText('UTF-8')
+            def referencedNames = (content =~ /\b(?:class|method|field|comp)_\d+\b/).collect { it.toString() } as Set
+            def replacements = [:]
+
+            classes.each { mapping ->
+                def intermediaryParts = mapping.intermediary.substring(mapping.intermediary.lastIndexOf('/') + 1).split('\\$')
+                def namedParts = mapping.named.substring(mapping.named.lastIndexOf('/') + 1).split('\\$')
+                if (intermediaryParts.any { referencedNames.contains(it) }) {
+                    replacements[mapping.intermediary] = mapping.named
+                    replacements[mapping.intermediary.replace('/', '.')] = mapping.named.replace('/', '.')
+                    replacements[mapping.intermediary.replace('/', '.').replace('$', '.')] = mapping.named.replace('/', '.').replace('$', '.')
+                    for (int i = 0; i < Math.min(intermediaryParts.length, namedParts.length); ++i) {
+                        replacements[intermediaryParts[i]] = namedParts[i]
+                    }
+                }
+            }
+
+            referencedNames.findAll { it.startsWith('method_') || it.startsWith('field_') || it.startsWith('comp_') }.each { name ->
+                if (!ambiguousMembers.contains(name) && members.containsKey(name)) {
+                    replacements[name] = members[name]
+                }
+            }
+
+            replacements.entrySet().sort { left, right -> right.key.length() <=> left.key.length() }.each { mapping ->
+                def pattern = /(?<![A-Za-z0-9_])${java.util.regex.Pattern.quote(mapping.key)}(?![A-Za-z0-9_])/
+                content = content.replaceAll(pattern) { mapping.value }
+            }
+
+            def relativePath = file('kr').toPath().relativize(source.toPath()).toString()
+            def destination = new File(generatedSources, relativePath)
+            destination.parentFile.mkdirs()
+            destination.setText(content, 'UTF-8')
+        }
+    }
+}
+
+tasks.named('compileJava') {
+    dependsOn tasks.named('remapIntermediarySources')
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
