@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "acorn_tracker",
+  "version": "1.1.0",
+  "name": "Acorn Tracker",
+  "description": "Server-confirmed birch mining and inventory-based acorn statistics.",
+  "environment": "client",
+  "entrypoints": { "client": ["kr.acorntracker.AcornTrackerClient"] },
+  "mixins": ["acorn_tracker.mixins.json"],
+  "depends": { "fabricloader": ">=0.19.5", "minecraft": "1.21.10", "java": ">=21", "fabric-api": "*" }
+}

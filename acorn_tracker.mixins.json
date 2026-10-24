@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "kr.acorntracker.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": ["InteractionMixin", "NetworkMixin", "WorldMixin"],
+  "injectors": { "defaultRequire": 1 }
+}
