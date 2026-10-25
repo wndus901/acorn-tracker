@@ -252,11 +252,6 @@ public final class AcornTrackerClient implements ClientModInitializer {
       this.saveConfig();
    }
 
-   public void setHudFont(String font) {
-      this.config.hudFont = font;
-      this.persistHud();
-   }
-
    private int setTree(TreeType tree, boolean enabled) {
       this.config.setMeasured(tree, enabled);
       this.saveConfig();

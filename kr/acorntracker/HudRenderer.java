@@ -128,16 +128,16 @@ public final class HudRenderer {
    }
 
    private static int textWidth(class_327 font, TrackerConfig config, String value) {
-      return font.method_27525(HudFonts.text(value, config.hudFont));
+      return font.method_27525(class_2561.method_43470(value));
    }
 
    private static void draw(class_332 ctx, class_327 font, TrackerConfig config, String value, int x, int y, int color) {
-      ctx.method_51433(font, HudFonts.text(value, config.hudFont), x, y, color, HudFonts.isDefault(config.hudFont));
+      ctx.method_51433(font, class_2561.method_43470(value), x, y, color, true);
    }
 
    private static void drawCentered(class_332 ctx, class_327 font, TrackerConfig config, String value, int centerX, int y, int color) {
-      class_2561 text = HudFonts.text(value, config.hudFont);
-      ctx.method_51433(font, text, centerX - font.method_27525(text) / 2, y, color, HudFonts.isDefault(config.hudFont));
+      class_2561 text = class_2561.method_43470(value);
+      ctx.method_51433(font, text, centerX - font.method_27525(text) / 2, y, color, true);
    }
 
    public static void rounded(class_332 ctx, int x, int y, int width, int height, int color) {
