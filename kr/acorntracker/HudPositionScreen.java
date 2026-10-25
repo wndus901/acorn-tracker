@@ -26,10 +26,6 @@ public final class HudPositionScreen extends class_437 {
       int total = Math.min(332, this.field_22789 - 16);
       int x = (this.field_22789 - total) / 2;
       int unit = (total - 12) / 3;
-      this.method_37063(new AcornButton(x, this.field_22790 - 80, total, 20, "글꼴 · " + HudFonts.label(this.config.hudFont), (button) -> {
-         AcornTrackerClient.INSTANCE.setHudFont(HudFonts.next(this.config.hudFont));
-         this.method_41843();
-      }));
       this.method_37063(new WoodlandSlider(x, this.field_22790 - 54, total, 20, (Math.clamp(this.config.hudScale, (double)0.5F, (double)2.0F) - (double)0.5F) / (double)1.5F) {
          {
             this.method_25346();

@@ -20,7 +20,6 @@ public final class TrackerConfig {
    public double hudScale = (double)1.0F;
    public int hudOpacity = 85;
    public String hudTheme = "forest";
-   public String hudFont = "default";
    public Map<String, Boolean> hudFields = new LinkedHashMap();
    public Map<String, Boolean> measuredTrees = new LinkedHashMap();
    public JsonElement acornStack;

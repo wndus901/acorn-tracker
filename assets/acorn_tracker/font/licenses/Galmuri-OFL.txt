@@ -1,6 +1,0 @@
-Copyright (c) 2019-2025 Lee Minseo (quiple@quiple.dev),
-with Reserved Font Name Galmuri.
-
-Galmuri is licensed under the SIL Open Font License, Version 1.1.
-The complete license text is included in OFL-1.1.txt in this directory.
-Font source: https://github.com/quiple/galmuri

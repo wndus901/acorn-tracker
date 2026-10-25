@@ -153,16 +153,11 @@ public final class HudSettingsScreen extends class_437 {
                HudSettingsScreen.this.config.hudOpacity = (int)Math.round(this.field_22753 * (double)100.0F);
             }
          });
-         this.method_37063(new AcornButton(x, this.top + 169, w, 20, "글꼴  ·  " + HudFonts.label(this.config.hudFont), (button) -> {
-            AcornTrackerClient.INSTANCE.setHudFont(HudFonts.next(this.config.hudFont));
-            this.refresh();
-         }));
-         this.method_37063(new AcornButton(x, this.top + 195, w, 20, "위치 · 스타일 기본값으로", (button) -> {
+         this.method_37063(new AcornButton(x, this.top + 169, w, 20, "위치 · 스타일 기본값으로", (button) -> {
             this.config.hudX = this.config.hudY = (double)0.0F;
             this.config.hudScale = (double)1.0F;
             this.config.hudOpacity = 85;
             this.config.hudTheme = "forest";
-            AcornTrackerClient.INSTANCE.setHudFont("default");
             this.refresh();
          }));
       }
